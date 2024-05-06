@@ -4,75 +4,60 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import game.state.PlayState;
+import game.state.GameStateManager;
+import game.util.KeyHandler;
+import game.util.MouseHandler;
 
 public class Engine {
 	
-	private static PlayState playState; // FIXME: 여러 개의 state를 관리하는 gameStateManager 선언
-	private static WindowManager windowManager;
+	private static GameStateManager gsm;
+	private static WindowManager wm;
+		
+	private static KeyHandler key;
+	private static MouseHandler mouse;
+	
 	private static Timer timer; // FIXME: Timer 대신 ScheduledThreadExecutor 사용
 
 	public static void init() {
-		// gameStateManager = new GameStateManager();
-		playState = new PlayState();
-		windowManager = new WindowManager();
-		timer = new Timer(20, new MainGameLoop());
+		gsm = new GameStateManager();
+		wm = new WindowManager();
+		
+		key = new KeyHandler();
+		mouse = new MouseHandler();
+		
+		timer = new Timer(20, new MainGameUpdate());
 	}
 
 	public static void start() {
-		// gameStateManager.stackState(new MainMenu(gameStateManager));
-		windowManager.addPanel(new GameScreen());
-		windowManager.addKeyListener(new Keyboard());
-		windowManager.createWindow();
+		// TODO: gameStateManager 시작
+		wm.addPanel(new GameScreen());
+		wm.addListener(key, mouse);
+		wm.createWindow();
 		timer.start();
 	}
 
-	private static class MainGameLoop implements ActionListener {
+	private static class MainGameUpdate implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// gameStateManager.loop();
-			playState.loop();
+			gsm.update();
+			gsm.input(key, mouse);
 		}
 
 	}
 
 	private static class GameScreen extends JPanel {
 
-		// private static final long serialVersionUID = 1L;
-
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			// gameStateManager.render(g);
-			playState.render(g);
+			gsm.render(g);
 			repaint();
 		}
 		
-	}
-
-	private static class Keyboard implements KeyListener {
-
-		@Override
-		public void keyPressed(KeyEvent key) {
-			// gameStateManager.keyPressed(key.getKeyCode());
-			playState.keyPressed(key.getKeyCode());
-		}
-
-		@Override
-		public void keyReleased(KeyEvent key) {
-			// gameStateManager.keyReleased(key.getKeyCode());
-			playState.keyReleased(key.getKeyCode());
-		}
-
-		@Override
-		public void keyTyped(KeyEvent arg0) {
-		}
-
 	}
 }

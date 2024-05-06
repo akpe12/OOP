@@ -1,10 +1,12 @@
 package game.main;
 
 import java.awt.Dimension;
-import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import game.util.KeyHandler;
+import game.util.MouseHandler;
 
 public class WindowManager {
 	
@@ -15,12 +17,12 @@ public class WindowManager {
 	public static final int HEIGHT = 552;
 	
 	public WindowManager() {
-		this.frame = new JFrame("Dragon Flight");
-		this.frame.setSize(WIDTH, HEIGHT);
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame = new JFrame("Dragon Flight");
+		frame.setSize(WIDTH, HEIGHT);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		this.frame.setResizable(false);
-		this.frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
 	}
 	
 	public void addPanel(JPanel panel) {
@@ -30,19 +32,15 @@ public class WindowManager {
 		this.panel.requestFocusInWindow();
 	}
 	
-	public void addKeyListener(KeyListener listener) {
-		try {
-			this.panel.addKeyListener(listener);
-		} catch(NullPointerException e) {
-			System.err.println("[WindowManager]: Error! Tried to add KeyListener before JPanel");
-			System.exit(-1);
-		}
+	public void addListener(KeyHandler key, MouseHandler mouse) {
+		panel.addKeyListener(key);
+		panel.addMouseListener(mouse);
 	}
 	
 	public void createWindow() {
-		this.frame.setContentPane(panel);
-		this.frame.pack();
-		this.frame.setVisible(true);
+		frame.setContentPane(panel);
+		frame.pack();
+		frame.setVisible(true);
 	}
 	
 }

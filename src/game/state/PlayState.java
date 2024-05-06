@@ -4,53 +4,31 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 import game.entity.Player;
+import game.util.KeyHandler;
+import game.util.MouseHandler;
 
-public class PlayState {
+public class PlayState extends GameState {
 
 	private Player player;
 
 	public PlayState() {
-
-		this.player = new Player();
-		
+		super();
+		player = new Player();
 	}
 
-	public void loop() {
-
-		this.player.move();
-
+	@Override
+	public void update() {
+		player.move();
 	}
 
-	public void render(Graphics graphics) {
-
-		this.player.render(graphics);
-
+	@Override
+	public void input(KeyHandler key, MouseHandler mouse) {
+		player.input(key, mouse);
 	}
-
-	public void keyPressed(int keyCode) {
-
-		switch (keyCode) {
-		case KeyEvent.VK_LEFT:
-			this.player.setLeft(true);
-			break;
-		case KeyEvent.VK_RIGHT:
-			this.player.setRight(true);
-			break;
-		}
-
-	}
-
-	public void keyReleased(int keyCode) {
-
-		switch (keyCode) {
-		case KeyEvent.VK_LEFT:
-			this.player.setLeft(false);
-			break;
-		case KeyEvent.VK_RIGHT:
-			this.player.setRight(false);
-			break;
-		}
-
+	
+	@Override
+	public void render(Graphics g) {
+		player.render(g);
 	}
 
 }
