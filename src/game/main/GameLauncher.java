@@ -8,8 +8,7 @@ public class GameLauncher {
 
 	public GameLauncher() {
 		Loader.load();
-		Engine.init();
-		Engine.start();
+		new Window();
 	}
 	
 }
