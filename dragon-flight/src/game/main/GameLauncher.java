@@ -10,4 +10,5 @@ public class GameLauncher {
 		Loader.load();
 		new Window();
 	}
+	
 }
