@@ -1,14 +1,20 @@
 package game.entity;
 
-import java.awt.Rectangle;
-
-public abstract class Entity extends Rectangle { // FIXME 
+public abstract class Entity { 
+	
+	protected double x;
+	protected double y;
+	protected int width;
+	protected int height;
 	
     protected boolean right = false;
     protected boolean left = false;
     
-    public Entity(int x, int y, int width, int height) {
-    	super(x, y, width, height);
+    public Entity(double x, double y, int width, int height) {
+    	this.x = x;
+    	this.y = y;
+    	this.width = width;
+    	this.height = height;
     }
     
 }

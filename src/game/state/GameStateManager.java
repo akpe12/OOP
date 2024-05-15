@@ -7,41 +7,31 @@ import game.util.KeyHandler;
 import game.util.MouseHandler;
 
 public class GameStateManager {
-	
-	private ArrayList<GameState> states;
-	
+
+	private GameState state;
+
 	public GameStateManager() {
-		states = new ArrayList<GameState>();
-		
-		states.add(new PlayState());
+		state = new PlayState(this);
 	}
-	
-	public void start() {
-		states.add(new PlayState());
+
+	public void update(double dt) {
+		state.update(dt);
 	}
-	
-	public void update() {
-		for (int i = 0; i < states.size(); i++) {
-            if (states.get(i) != null) {
-                states.get(i).update();
-            }
-        }
-	}
-	
+
 	public void input(KeyHandler key, MouseHandler mouse) {
-		for (int i = 0; i < states.size(); i++) {
-            if (states.get(i) != null) {
-                states.get(i).input(key, mouse);
-            }
-        }     
+		state.input(key, mouse);
+	}
+
+	public void render(Graphics2D g) {
+		state.render(g);
 	}
 	
-	public void render(Graphics2D g) {
-        for (int i = 0; i < states.size(); i++) {
-            if (states.get(i) != null) {
-                states.get(i).render(g);
-            }
-        }
-    }
+	public void setState(GameState state) {
+		this.state = state;
+	}
 	
+	public GameState getState() {
+		return state;
+	}
+
 }

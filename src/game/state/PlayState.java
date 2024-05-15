@@ -1,7 +1,10 @@
 package game.state;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
+import game.entity.Bullet;
+import game.entity.Enemy;
 import game.entity.Player;
 import game.map.Background;
 import game.util.KeyHandler;
@@ -9,37 +12,60 @@ import game.util.MouseHandler;
 
 public class PlayState extends GameState {
 
-	private Player player;
 	private Background background;
-	// TODO enemy 멤버변수 만들기
-	// TODO bullet 멤버변수 만들기
+	private Player player;
+	private ArrayList<Enemy> enemies;
+	private ArrayList<Bullet> bullets;
 
-	public PlayState() {
-		super();
-		player = new Player();
+	public PlayState(GameStateManager gsm) {
+		super(gsm);
 		background = new Background();
+		player = new Player(this);
+		enemies = new ArrayList<Enemy>();
+		bullets = new ArrayList<Bullet>();
 	}
 
 	@Override
-	public void update() {
-		background.move();
-		player.move();
-		// TODO enemy.move();
-		// TODO bullet.move();
+	public void update(double dt) {
+		
+		background.move(dt);
+		
+		player.move(dt);
+		player.fire(dt);
+		
+		// enemies.move(dt);
+		
+	    for (int i = 0; i < bullets.size();) {
+            Bullet b = bullets.get(i);
+            b.move(dt);
+            
+            if (b.isOut()) {
+				bullets.remove(b);
+				continue;
+			}
+            
+            ++i;
+	    }
+	    
 	}
 
 	@Override
 	public void input(KeyHandler key, MouseHandler mouse) {
 		player.input(key, mouse);
 	}
-	
+
 	@Override
 	public void render(Graphics2D g) {
 		background.render(g);
 		player.render(g);
-		// TODO enemy.render(g);
-		// TODO projectile.render(g);
+		// enemy.render(g);
+		
+		for(Bullet bullet: bullets) {
+			bullet.render(g);
+		}
 	}
 
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
+	}
 }
-

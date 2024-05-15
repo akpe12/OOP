@@ -6,8 +6,8 @@ public class Window extends JFrame {
 
 	private GamePanel gp;
 
-	private static final int WIDTH = 384;
-	private static final int HEIGHT = 512;
+	public static final int WIDTH = 384;
+	public static final int HEIGHT = 512;
 
 	public Window() {
 		setTitle("Dragon Flight");
