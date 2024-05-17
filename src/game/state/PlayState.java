@@ -18,67 +18,49 @@ public class PlayState extends GameState {
 	private Background background;
 	private Player player;
 	private ArrayList<Enemy> enemies;
+	private ArrayList<Bullet> bullets;
 
-	// bullet
-	private double elapsed = 0;
-	private double bulletPeriod = 0.08; // 80ms
-	private Bullet bullet;
-	private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
-
-
-	public PlayState() {
-		super();
+	public PlayState(GameStateManager gsm) {
+		super(gsm);
 		background = new Background();
-		player = new Player();
-
+		player = new Player(this);
 		enemies = new ArrayList<Enemy>();
 		spawn();
+		bullets = new ArrayList<Bullet>();
+
 	}
 
 	@Override
 	public void update(double dt) {
 		background.move(dt);
 		player.move(dt);
+		player.fire(dt);
 
 		// @JW : enemies 업데이트 함수
-		enemyHit(dt);
-
+		enemyHit();
 		for(int i = 0; i < enemies.size(); i++)
 		{
+			if((enemies.get(i).isOut()))
+			{
+				enemies.clear();
+				spawn();
+			}
 
 			if (enemies.get(i).isAlive())
-				if((enemies.get(i).isOut()))
-				{
-					enemies.clear();
-					spawn();
-				}
-				else
-					enemies.get(i).move(dt);
+				enemies.get(i).move(dt);
 			else
 				enemies.remove(i);
 		}
 
-		fireBullet(dt);
-
-		for (Bullet bullet: bullets) {
+		for (int i = 0; i < bullets.size();) {
+			Bullet bullet = bullets.get(i);
 			bullet.move(dt);
 
 			if (bullet.isOut()) {
 				bullets.remove(bullet);
+				continue;
 			}
-		}
-
-
-
-	}
-
-	public void fireBullet(double dt) {
-		elapsed = elapsed + dt;
-		if (elapsed > bulletPeriod) {
-			Bullet bullet = new Bullet((int)player.getX());
-			bullets.add(bullet);
-
-			elapsed = 0;
+			i++;
 		}
 	}
 
@@ -93,11 +75,11 @@ public class PlayState extends GameState {
 		}
 	}
 
-	// 몬스터 5마리가 각각 총알 xy좌표랑 겹치면 hp를 깎아야됨
-	public void enemyHit(double dt){
+	// @JW : FIXME 총알에 맞은 몬스터는 y좌표 딜레이있음
+	public void enemyHit(){
 		for(int i = 0; i < enemies.size(); i++)
 		{
-			// @JW : 좌표 범위내에 들어오면 gethit(getdamage) 실행
+			// @JW : 좌표 범위내에 들어오면 getHit(getDamage) 실행
 			for(int j = 0; j < bullets.size(); j++)
 				if((abs (enemies.get(i).getX() - bullets.get(j).getX()) <= 40) &&
 						(abs (enemies.get(i).getY() - bullets.get(j).getY()) <= 40))
@@ -121,6 +103,14 @@ public class PlayState extends GameState {
 
 		for(Enemy i : enemies)
 			i.render(g);
+	}
+
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
+	}
+
+	public ArrayList<Enemy> getEnemies(){
+		return enemies;
 	}
 }
 

@@ -10,22 +10,35 @@ import game.util.MouseHandler;
 
 public class Player extends Entity {
 
+	private GameState state;
 	private int speed;
 
-	public Player() {
+	private double bulletPeriod = 0.08; // 80ms
+	private double elapsed = 0;
+
+	public Player(GameState state) {
 		super((384 - 80) / 2, 512 - 100, 80, 80); // @YDH FIXME 상수 선언
 		this.speed = 500;
+		this.state = state;
 	}
 
 	public void move(double dt) {
-
 		if (left) {
 			x -= this.speed * dt;
 		}
 		if (right) {
 			x += this.speed * dt;
 		}
+	}
 
+	public void fire(double dt) {
+		elapsed += dt;
+		if (elapsed > bulletPeriod) {
+			Bullet bullet = new Bullet((int) x);
+			((PlayState) state).getBullets().add(bullet);
+
+			elapsed = 0;
+		}
 	}
 
 	public void input(KeyHandler key, MouseHandler mouse) {

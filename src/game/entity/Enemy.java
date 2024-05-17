@@ -1,5 +1,7 @@
 package game.entity;
 
+import game.state.GameState;
+
 import java.awt.Graphics;
 import javax.swing.*;
 
@@ -15,10 +17,18 @@ public class Enemy extends Entity {
 
     private double speed;   // @JW : double?
 
+    // FIXME
+    private GameState state;
+
     public Enemy(int x) {
 
         super(x, -70, 60, 60, 100);      // @JW 사이즈 조절?
         this.speed = 3;
+    }
+
+    // FIXME
+    public Enemy(GameState state){
+        this.state =state;
     }
 
     public void move(double dt) {
