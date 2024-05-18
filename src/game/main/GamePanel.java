@@ -43,66 +43,74 @@ public class GamePanel extends JPanel implements Runnable {
 		super.addNotify();
 
 		if (thread == null) {
-			thread = new Thread(this, "GameThread");
+			thread = new Thread(this);
 			thread.start();
 		}
 	}
 
 	public void run() {
-		
 		init();
 		
 		final double NS_TO_S = 1 / 1e9;
 		final double NS_TO_MS = 1 / 1e6;
 
-		double nowNanoTime = System.nanoTime();
-		double lastNanoTime;
+		long nsCurrent = System.nanoTime();
+		long nsLast;
 		double dt;
 		
-		int nowSecondTime;
-		int lastSecondTime = (int) (nowNanoTime * NS_TO_S);
-		int runningTime = 0;
+		int sCurrent;
+		int sLast = (int) (nsCurrent * NS_TO_S);
+		int sRunning = 0;
 		
 		int frameCount = 0;
-		final double TARGET_FPS = 64.0;
-		final double TARGET_DELAY = 1e9 / TARGET_FPS;
+		final double TARGET_FPS = 144.0;
+		final long DRAW_INTERVAL = (long) (1e9 / TARGET_FPS);
 		
 		while (running) {
+			//-------------------------Update time variables-------------------------//
 			
-			lastNanoTime = nowNanoTime;
-			nowNanoTime = System.nanoTime();
-			dt = (nowNanoTime - lastNanoTime) * NS_TO_S;
+			nsLast = nsCurrent;
+			nsCurrent = System.nanoTime();
+			dt = (nsCurrent - nsLast) * NS_TO_S;
 			
-			update(dt);
-			input(key, mouse);
-			render();
-			draw();
-			frameCount++;
-			
-			nowSecondTime = (int) (nowNanoTime * NS_TO_S);
-			if (nowSecondTime - lastSecondTime > 0) {
+			sCurrent = (int) (nsCurrent * NS_TO_S);
+			if (sCurrent - sLast > 0) {
 				int fps = frameCount;
 				frameCount = 0;
 				
-				lastSecondTime = nowSecondTime;
+				sLast = sCurrent;
 				
-				runningTime++;
-				System.out.println(runningTime + "s " + fps);
+				++sRunning;
+				System.out.println(sRunning + "s " + fps + "fps");
 			}
 			
-			long sleepTime = (long) ((TARGET_DELAY - (System.nanoTime() - nowNanoTime)) * NS_TO_MS);
-			if (sleepTime > 0) {
-	            try {
-	                Thread.sleep(sleepTime);
-	            } catch (InterruptedException e) {
-	                e.printStackTrace();
-	            }
-	        }
+			++frameCount;
 			
+			//--------------------------Work on game screen--------------------------//
+			
+			input(key, mouse);
+			
+			update(dt);
+			
+			repaint();
+			
+			//--------------------Adjusting for the draw interval--------------------//
+			
+            long nsWait = DRAW_INTERVAL - (System.nanoTime() - nsCurrent);
+            long msWait = (long) (nsWait * NS_TO_MS);
+            
+            if (msWait > 0) {
+                try {
+                    Thread.sleep(msWait - 1);  // -1 for more accurate fps
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+			
+            while (System.nanoTime() - nsCurrent < DRAW_INTERVAL) {} // Busy-waiting
 		}
-		
 	}
-
+	
 	public void init() {
 		running = true;
 
@@ -110,13 +118,13 @@ public class GamePanel extends JPanel implements Runnable {
 
 		key = new KeyHandler(); 
 		mouse = new MouseHandler(); 
-
+		
 		addKeyListener(key);
 		addMouseListener(mouse);
 
 		gsm = new GameStateManager(); 
 	}
-
+	
 	public void initGraphics() {
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D) img.getGraphics();
@@ -131,17 +139,18 @@ public class GamePanel extends JPanel implements Runnable {
 		gsm.input(key, mouse);
 	}
 
-	public void render() {
-		if (g != null) {
-			g.setColor(new Color(0, 200, 0));
-			g.fillRect(0, 0, width, height);
-			gsm.render(g);
-		}
-	}
-
-	public void draw() {
-		Graphics g2 = (Graphics) this.getGraphics();
+	@Override
+	public void paintComponent(Graphics g2) {
+		super.paintComponent(g2);
+		
+		// Drawing onto an off-screen image for double buffering 
+		g.setColor(new Color(200, 255, 200));
+		g.fillRect(0, 0, width, height);
+		gsm.render(g);
+		
+		// Displaying the off-screen image
 		g2.drawImage(img, 0, 0, width, height, null);
 		g2.dispose();
 	}
+	
 }
