@@ -1,8 +1,10 @@
 package game.state;
 
 import java.awt.Graphics2D;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 
+import game.entity.Bullet;
+import game.entity.Enemy;
 import game.entity.Player;
 import game.entity.Bullet;
 import game.map.Background;
@@ -13,63 +15,91 @@ public class PlayState extends GameState {
 
 	private Background background;
 	private Player player;
-	// @YDH TODO private Enemy enemy;
+	private ArrayList<Enemy> enemies;
+	private ArrayList<Bullet> bullets;
 	
-	private double elapsed = 0;
-	private double bulletPeriod = 0.08; // 80ms
-	private Bullet bullet;
-	private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
-
-	public PlayState() {
-		super();
+	public PlayState(GameStateManager gsm) {
+		super(gsm);
 		background = new Background();
-		player = new Player();
-		// @YDH TODO enemy = new Enemy();
-//		bullet = new Bullet((int)player.getX());
+		player = new Player(this);
+		enemies = new ArrayList<Enemy>();
+		spawn();
+		bullets = new ArrayList<Bullet>();
 	}
 
 	@Override
 	public void update(double dt) {
+		
 		background.move(dt);
+		
 		player.move(dt);
-		// @YDH TODO enemy.move();
+		player.fire(dt);
+		player.checkCollision(dt); // @YCW: pass dt to this for checking elapsed invincible time
 		
-		fireBullet(dt);
-		
-		for (Bullet bullet: bullets) {
-			bullet.move();
-			
-			if (bullet.isOut()) {
-				bullets.remove(bullet);
+		for(int i = 0; i < enemies.size(); i++)
+		{
+			enemies.get(i).enemyHit();
+
+			if((enemies.get(i).isOut())) {
+				enemies.clear();
+				spawn();
 			}
+
+			if (enemies.get(i).isAlive())
+				enemies.get(i).move(dt);
+			else
+				enemies.remove(i);
 		}
+		
+	    for (int i = 0; i < bullets.size();) {
+            Bullet bullet = bullets.get(i);
+            bullet.move(dt);
+            
+            if (bullet.isOut()) {
+				bullets.remove(bullet);
+				continue;
+			}
+            
+            ++i;
+	    }
+
 	}
 
 	@Override
 	public void input(KeyHandler key, MouseHandler mouse) {
 		player.input(key, mouse);
 	}
-	
+
 	@Override
 	public void render(Graphics2D g) {
 		background.render(g);
 		player.render(g);
-		// @YDH TODO enemy.render(g);
 		
 		for(Bullet bullet: bullets) {
 			bullet.render(g);
 		}
-	}
-	
-	public void fireBullet(double dt) {
-		elapsed = elapsed + dt;
-		if (elapsed > bulletPeriod) {
-			Bullet bullet = new Bullet((int)player.getX());
-			bullets.add(bullet);
-			
-			elapsed = 0;
+		
+		for(Enemy enemy : enemies) {
+			enemy.render(g);
 		}
 	}
+	
+	public void spawn() {
+		int x = 0;
 
+		for(int i = 0 ; i < 5; i++)
+		{
+			Enemy tempE = new Enemy(x, this);
+			enemies.add(tempE);
+			x += 78;
+		}
+	}
+	
+	public ArrayList<Enemy> getEnemies(){
+		return enemies;
+	}
+
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
+	}
 }
-
