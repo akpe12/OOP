@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import game.state.GameStateManager;
+import game.state.PlayState;
 import game.util.KeyHandler;
 import game.util.MouseHandler;
 
@@ -50,34 +51,35 @@ public class GamePanel extends JPanel implements Runnable {
 	public void run() {
 		
 		init();
+		
+		final double NS_TO_S = 1 / 1e9;
+		final double NS_TO_MS = 1 / 1e6;
 
 		double nowNanoTime = System.nanoTime();
-		double temp = nowNanoTime;
 		double lastNanoTime;
 		double dt;
 		
 		int nowSecondTime;
-		int lastSecondTime = (int) (nowNanoTime / 1e9);
+		int lastSecondTime = (int) (nowNanoTime * NS_TO_S);
 		int runningTime = 0;
 		
 		int frameCount = 0;
-		final double TARGET_FPS = 64.0;
-		final double TARGET_NANOTIME = 1e9 / TARGET_FPS;
+		final double TARGET_FPS = 144.0;
+		final double TARGET_DELAY = 1e9 / TARGET_FPS;
 		
 		while (running) {
 			
-			lastNanoTime = temp;
+			lastNanoTime = nowNanoTime;
 			nowNanoTime = System.nanoTime();
-			temp = nowNanoTime;
-			dt = (nowNanoTime - lastNanoTime) / 1e9;
+			dt = (nowNanoTime - lastNanoTime) * NS_TO_S;
 			
-			update(dt);
 			input(key, mouse);
+			update(dt);
 			render();
 			draw();
 			frameCount++;
 			
-			nowSecondTime = (int) (nowNanoTime / 1e9);
+			nowSecondTime = (int) (nowNanoTime * NS_TO_S);
 			if (nowSecondTime - lastSecondTime > 0) {
 				int fps = frameCount;
 				frameCount = 0;
@@ -88,19 +90,15 @@ public class GamePanel extends JPanel implements Runnable {
 				System.out.println(runningTime + "s " + fps);
 			}
 			
-			nowNanoTime = System.nanoTime();
-			while (nowNanoTime - temp < TARGET_NANOTIME ) {
-				Thread.yield();
-
-                try {
-                    Thread.sleep(1);
-                } catch (Exception e) {
-                    System.out.println("ERROR: yielding thread");
-                }
-
-                nowNanoTime = System.nanoTime();
-			}
-				
+			long sleepTime = (long) ((TARGET_DELAY - (System.nanoTime() - nowNanoTime)) * NS_TO_MS);
+			if (sleepTime > 0) {
+	            try {
+	                Thread.sleep(sleepTime);
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	        }
+			
 		}
 		
 	}
