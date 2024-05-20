@@ -1,5 +1,6 @@
 package game.main;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class Resource {

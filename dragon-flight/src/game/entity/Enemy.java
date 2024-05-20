@@ -14,10 +14,9 @@ import static game.main.Window.WIDTH;
 
 public class Enemy extends Entity {
 
-    // @JW : gif는 ImageIcon 사용
     public static ImageIcon enemy = new ImageIcon("image/enemy_mov.gif");
 
-    private double speed;   // @JW : double?
+    private double speed;
 
     // FIXME
     private GameState state;
@@ -30,7 +29,7 @@ public class Enemy extends Entity {
     }
 
     public void move(double dt) {
-        y += this.speed * (dt * 100);   // @JW : dt에 100 곱해야 1.6, 1.5 이렇게 배수 곱해짐
+        y += this.speed * (dt * 100);
 
     }
 
@@ -45,14 +44,13 @@ public class Enemy extends Entity {
     public void enemyHit(){
         ArrayList<Bullet> bullets = ((PlayState)state).getBullets();
 
-        // @JW : 좌표 범위내에 들어오면 getHit(getDamage) 실행
+        // @JW : 좌표 범위내에 들어오면
         for(int i = 0; i < bullets.size(); i++)
             if((abs (x - bullets.get(i).getX()) <= 40) &&
                     (abs (y - bullets.get(i).getY()) <= 40))
-                this.hp -= bullets.get(i).getDamage();
+                this.hp -= bullets.get(i).getDam();
     }
 
-    // @JW : gif는 스윙 ImageIcon의 paintIcon 사용
     public void render(Graphics g) {
         enemy.paintIcon(null, g, (int)x, (int)y);
     }
@@ -65,12 +63,12 @@ public class Enemy extends Entity {
         return y;
     }
 
-    // @YCW: add getWidth and getHeight for implementing the checking collision between character and enemy 
+    // @YCW: add getWidth and getHeight for implementing the checking collision between character and enemy
     public int getWidth() {
-    	return this.width;
+        return this.width;
     }
-    
+
     public int getHeight() {
-    	return this.height;
+        return this.height;
     }
 }
