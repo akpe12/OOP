@@ -6,9 +6,9 @@ import game.util.KeyHandler;
 import game.util.MouseHandler;
 
 public abstract class GameState {
-	
+
 	protected GameStateManager gsm;
-	
+
 	public GameState(GameStateManager gsm) {
 		this.gsm = gsm;
 	}
