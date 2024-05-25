@@ -7,8 +7,6 @@ public class GameLauncher {
 	}
 
 	public GameLauncher() {
-		Loader.load();
 		new Window();
 	}
-	
 }

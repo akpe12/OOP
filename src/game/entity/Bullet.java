@@ -16,7 +16,7 @@ public class Bullet extends Entity{
 
 
     public Bullet(int playerX) {
-        super(playerX - 10, 512 - 100, 100, 100);
+        super(playerX - 10, 512 - 150, 100, 100);
 
         loadImg(imgPath);
 

@@ -3,8 +3,10 @@ package game.state;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import game.effect.Effect;
 import game.entity.Bullet;
 import game.entity.Enemy;
+import game.entity.Obstacle;
 import game.entity.Player;
 import game.map.Background;
 import game.util.KeyHandler;
@@ -17,18 +19,27 @@ public class PlayState extends GameState {
 	private Player player;
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Bullet> bullets;
+	private Obstacle obstacle;
+	private ArrayList<Effect> effects;
 
-	// @JW : spawn related, milliseconds.
-	private final int SPAWN_DELAY = 3000;
-	private long lastSpawnTime;
+	// @JW : enemies spawn related, milliseconds.
+	private final int SPAWN_DELAY_E = 3000;
+	private long lastSpawnTime_E;
+
+	// @JW : obstacle trigger, milliseconds.
+	private final int SPAWN_DELAY_O = 7000;
+	private long lastSpawnTime_O;
 
 	public PlayState(GameStateManager gsm) {
 		super(gsm);
 		background = new Background();
 		player = new Player(this);
+
 		enemies = new ArrayList<Enemy>();		// @JW : Enemy 객체에 state 대입은 아래 spawn 메소드에서
-		spawn();
+		spawnE();
+		spawnO();
 		bullets = new ArrayList<Bullet>();
+		effects = new ArrayList<Effect>();
 	}
 
 	@Override
@@ -39,6 +50,55 @@ public class PlayState extends GameState {
 		player.fire(dt);
 		player.checkCollision(dt); // @YCW: pass dt to this for checking elapsed invincible time
 
+		updateE(dt);	// Enemy
+		updateB(dt);	// Bullet
+		updateO(dt);	// Obstacle
+	}
+
+	public void spawnE() {
+		lastSpawnTime_E = System.currentTimeMillis();
+
+		int x = 0;
+		for(int i = 0 ; i < 5; i++)
+		{
+			Enemy tempE = new Enemy(x, this);
+			enemies.add(tempE);
+			x += 78;
+		}
+	}
+	public void updateE(double dt) {
+		if (System.currentTimeMillis() - lastSpawnTime_E >= SPAWN_DELAY_E){
+			if(enemies.isEmpty())
+				spawnE();
+
+			enemies.clear();
+			spawnE();
+		}
+		
+		for (int i = enemies.size() - 1; i >= 0; i--) {
+			enemies.get(i).enemyHit();
+
+			if (enemies.get(i).isAlive()) {
+				enemies.get(i).move(dt);
+			} else {
+				enemies.get(i).dead();
+				enemies.remove(i);
+			}
+		}
+		
+		for (Effect e : effects)
+			e.play(dt);
+		
+		for (int i = effects.size() - 1; i >= 0; i--) {
+			Effect e = effects.get(i);
+			
+			if (e.isFinished()) {
+				effects.remove(i);
+			}
+		}
+	}
+
+	public void updateB(double dt) {
 		for (int i = 0; i < bullets.size();) {
 			Bullet bullet = bullets.get(i);
 			bullet.move(dt);
@@ -49,36 +109,20 @@ public class PlayState extends GameState {
 			}
 			i++;
 		}
-
-		// @JW : enemies related
-		if (System.currentTimeMillis() - lastSpawnTime >= SPAWN_DELAY){
-
-			if(enemies.isEmpty())
-				spawn();
-
-			enemies.clear();
-			spawn();
-		}
-		for (int i = 0; i < enemies.size(); i++) {
-			enemies.get(i).enemyHit();
-
-			if (enemies.get(i).isAlive())
-				enemies.get(i).move(dt);
-			else
-				enemies.remove(i);
-		}
 	}
 
-	public void spawn() {
-		lastSpawnTime = System.currentTimeMillis();
+	public void spawnO() {
+		lastSpawnTime_O = System.currentTimeMillis();
 
-		int x = 0;
-		for(int i = 0 ; i < 5; i++)
-		{
-			Enemy tempE = new Enemy(x, this);
-			enemies.add(tempE);
-			x += 78;
+		obstacle = new Obstacle(this, player.getX());
+	}
+	public void updateO(double dt) {
+		if (System.currentTimeMillis() - lastSpawnTime_O >= SPAWN_DELAY_O) {
+
+			spawnO();
 		}
+
+		obstacle.move(dt);
 	}
 
 	@Override
@@ -95,6 +139,14 @@ public class PlayState extends GameState {
 			b.render(g);
 
 		for(Enemy e : enemies)
+		{
+			if (e != null)
+				e.render(g);
+		}
+
+		obstacle.render(g);
+		
+		for (Effect e : effects) 
 			e.render(g);
 	}
 
@@ -104,6 +156,18 @@ public class PlayState extends GameState {
 
 	public ArrayList<Enemy> getEnemies(){
 		return enemies;
+	}
+
+	public Obstacle getObstacle(){
+		return obstacle;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public ArrayList<Effect> getEffects(){
+		return effects;
 	}
 }
 

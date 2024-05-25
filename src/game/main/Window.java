@@ -6,9 +6,6 @@ public class Window extends JFrame {
 
 	private GamePanel gp;
 
-	public static final int WIDTH = 384;
-	public static final int HEIGHT = 512;
-
 	public Window() {
 		setTitle("Dragon Flight");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -19,10 +16,11 @@ public class Window extends JFrame {
 		setVisible(true);
 	}
 
+	@Override
 	public void addNotify() {
 		super.addNotify();
 
-		gp = new GamePanel(WIDTH, HEIGHT);
+		gp = new GamePanel(384, 512);
 		setContentPane(gp);
 	}
 

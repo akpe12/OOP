@@ -1,16 +1,18 @@
 package game.entity;
 
-import java.awt.Graphics;
-import java.util.ArrayList;
-import javax.swing.*;
+import static java.awt.image.ImageObserver.HEIGHT;
 import static java.lang.Math.abs;
 
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+
+import game.effect.Effect;
+import game.effect.EnemyDeathEffect;
+import game.math.Vector2f;
 import game.state.GameState;
 import game.state.PlayState;
-
-import static game.main.Window.HEIGHT;
-import static game.main.Window.WIDTH;
-
 
 public class Enemy extends Entity {
 
@@ -30,7 +32,6 @@ public class Enemy extends Entity {
 
     public void move(double dt) {
         y += this.speed * (dt * 100);
-
     }
 
     public boolean isAlive(){
@@ -49,6 +50,13 @@ public class Enemy extends Entity {
             if((abs (x - bullets.get(i).getX()) <= 40) &&
                     (abs (y - bullets.get(i).getY()) <= 40))
                 this.hp -= bullets.get(i).getDam();
+    }
+    
+    public void dead() {
+    	int x = (int)(this.x + this.width / 2);
+    	int y = (int)(this.y + this.height / 2);
+    	Effect deathEffect = new EnemyDeathEffect(new Vector2f(x, y));
+    	((PlayState)state).getEffects().add(deathEffect);
     }
 
     public void render(Graphics g) {

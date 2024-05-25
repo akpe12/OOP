@@ -15,9 +15,9 @@ import game.util.KeyHandler;
 import game.util.MouseHandler;
 
 public class GamePanel extends JPanel implements Runnable {
-
-	public static int width;
-	public static int height;
+	
+	public static int width;  // FIXME
+	public static int height;  // FIXME
 
 	private Thread thread;
 	private boolean running = false;
@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
 		requestFocus();
 	}
 
+	@Override
 	public void addNotify() {
 		super.addNotify();
 
@@ -57,15 +58,15 @@ public class GamePanel extends JPanel implements Runnable {
 		long nsCurrent = System.nanoTime();
 		long nsLast;
 		double dt;
-
+		
 		int sCurrent;
 		int sLast = (int) (nsCurrent * NS_TO_S);
 		int sRunning = 0;
-
+		
 		int frameCount = 0;
 		final double TARGET_FPS = 144.0;
 		final long DRAW_INTERVAL = (long) (1e9 / TARGET_FPS);
-
+		
 		while (running) {
 			//-------------------------Update time variables-------------------------//
 
@@ -77,45 +78,48 @@ public class GamePanel extends JPanel implements Runnable {
 			if (sCurrent - sLast > 0) {
 				int fps = frameCount;
 				frameCount = 0;
-
+				
 				sLast = sCurrent;
-
+				
 				++sRunning;
 				System.out.println(sRunning + "s " + fps + "fps");
 			}
-
+			
 			++frameCount;
-
+			
 			//--------------------------Work on game screen--------------------------//
-
+			
 			input(key, mouse);
-
+			
 			update(dt);
-
+			
 			repaint();
-
+			
 			//--------------------Adjusting for the draw interval--------------------//
-
-			long nsWait = DRAW_INTERVAL - (System.nanoTime() - nsCurrent);
-			long msWait = (long) (nsWait * NS_TO_MS);
-
-			if (msWait > 0) {
-				try {
-					Thread.sleep(msWait - 1);  // -1 for more accurate fps
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-			while (System.nanoTime() - nsCurrent < DRAW_INTERVAL) {} // Busy-waiting
+			
+            long nsWait = DRAW_INTERVAL - (System.nanoTime() - nsCurrent);
+            long msWait = (long) (nsWait * NS_TO_MS);
+            
+            if (msWait > 0) {
+                try {
+                    Thread.sleep(msWait - 1);  // -1 for more accurate fps
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+			
+            while (System.nanoTime() - nsCurrent < DRAW_INTERVAL) {} // Busy-waiting
 		}
 	}
-
+	
 	public void init() {
 		running = true;
 
 		initGraphics();
 
+		key = new KeyHandler(); 
+		mouse = new MouseHandler(); 
+		
 		key = new KeyHandler();
 		mouse = new MouseHandler();
 
@@ -124,7 +128,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 		gsm = new GameStateManager();
 	}
-
+	
 	public void initGraphics() {
 		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D) img.getGraphics();
@@ -142,8 +146,8 @@ public class GamePanel extends JPanel implements Runnable {
 	@Override
 	public void paintComponent(Graphics g2) {
 		super.paintComponent(g2);
-
-		// Drawing onto an off-screen image for double buffering
+		
+		// Drawing onto an off-screen image for double buffering 
 		g.setColor(new Color(200, 255, 200));
 		g.fillRect(0, 0, width, height);
 		gsm.render(g);
@@ -152,5 +156,5 @@ public class GamePanel extends JPanel implements Runnable {
 		g2.drawImage(img, 0, 0, width, height, null);
 		g2.dispose();
 	}
-
+	
 }

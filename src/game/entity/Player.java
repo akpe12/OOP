@@ -1,15 +1,26 @@
 package game.entity;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import game.main.Resource;
+import javax.imageio.ImageIO;
+
 import game.state.GameState;
 import game.state.PlayState;
 import game.util.KeyHandler;
 import game.util.MouseHandler;
 
+import javax.swing.*;
+
+import static java.lang.Math.abs;
+
 public class Player extends Entity {
+
+	public static ImageIcon player = new ImageIcon("image/player.png");
+	public static ImageIcon player_inv = new ImageIcon("image/player_inv.gif");
 
 	private GameState state;
 	private int hp;
@@ -24,22 +35,21 @@ public class Player extends Entity {
 	private boolean isInvincible = false;
 
 	public Player(GameState state) {
-		super((384 - 80) / 2, 512 - 100, 80, 80); // FIXME @YDH : 상수 선언
-
+		super((384 - 80) / 2, 512 - 100, 50, 50); // FIXME @YDH : 상수 선언
 		this.hp = 3; // @YCW: default hp value = 3
 		this.speed = 500;
 		this.state = state;
 	}
 
 	public void move(double dt) {
-		if (isInvincible == false) {
-			if (left) {
-				x -= this.speed * dt;
-			}
-			if (right) {
-				x += this.speed * dt;
-			}
+		//	if (isInvincible == false) {
+		if (left) {
+			x -= this.speed * dt;
 		}
+		if (right) {
+			x += this.speed * dt;
+		}
+		//	}
 	}
 	public void fire(double dt) {
 		if (isInvincible == false) {
@@ -71,22 +81,26 @@ public class Player extends Entity {
 		}
 	}
 
-	public void render(Graphics2D g) {
-		if (isInvincible == false)
-			g.drawImage(Resource.player, (int) x, (int) y, width, height, null);
-	}
-
-	// @YCW: add checkColision for interaction between Character and Enemy
+	// @YCW: add checkColision for interaction between Character and Enemy ( + Character and Obstacle )
 	public void checkCollision(double dt) {
 		ArrayList<Enemy> enemies = ((PlayState)state).getEnemies();
+		Obstacle obstacle = ((PlayState)state).getObstacle();
 
-		for(int i = 0; i < enemies.size(); i++) {
-			if(Math.abs((this.x + this.width / 2) - (enemies.get(i).getX() + this.width / 2)) < (enemies.get(i).getWidth() / 2 + this.width / 2) &&
-					Math.abs((this.y + this.height / 2) - (enemies.get(i).getY() + enemies.get(i).getHeight() / 2)) < (enemies.get(i).getHeight() / 2 + this.height / 2) &&
-					isInvincible == false) {
+		for(int i = 0; i < enemies.size(); i++)
+			if((abs((this.x + this.width / 2) - (enemies.get(i).getX() + this.width / 2)) < (enemies.get(i).getWidth() / 2 + this.width / 2) &&
+					abs((this.y + this.height / 2) - (enemies.get(i).getY() + enemies.get(i).getHeight() / 2)) < (enemies.get(i).getHeight() / 2 + this.height / 2)) &&
+					isInvincible == false)
+			{
 				isCollision = true;
 			}
-		}
+
+		if(obstacle != null)
+			if((abs (this.x - obstacle.getX()) <= 50) &&
+					((obstacle.hitY() <= this.y) && (obstacle.hitY() + 20 >= this.y)) &&
+					isInvincible == false)
+			{
+				isCollision = true;
+			}
 
 		if (isCollision == true) {
 			hp = hp - 1;
@@ -102,6 +116,13 @@ public class Player extends Entity {
 				elapsedInvincibleTime = 0;
 			}
 		}
+	}
+
+	public void render(Graphics2D g) {
+		if (!isInvincible)
+			player.paintIcon(null,g,(int)x,(int)y);
+		else
+			player_inv.paintIcon(null,g,(int)x,(int)y);
 	}
 
 	// @YCW: add getX for x position of bullet

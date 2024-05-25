@@ -12,6 +12,11 @@ public abstract class Entity {
 
 	protected int hp;
 
+	public Entity(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
     public Entity(double x, double y, int width, int height) {
     	this.x = x;
     	this.y = y;
@@ -28,5 +33,4 @@ public abstract class Entity {
 
 		this.hp = hp;
 	}
-    
 }
