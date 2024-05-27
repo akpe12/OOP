@@ -34,7 +34,7 @@ public class Obstacle extends Entity {
         if (System.currentTimeMillis() - lastTargetTime < METEO_DELAY)
             this.x += ((player.getX() - this.x) + 11) * 0.03; // interpolation
         else
-            if (!trackEnd) {        // @JW : warning 딜레이가 끝나고, trackEnd가 바뀌기 직전;
+            if (!trackEnd) {        // @JW : warning 딜레이가 끝나고, trackEnd가 바뀌기 직전
                 this.x -= 23;
                 this.y = -300;
                 trackEnd = true;
@@ -51,7 +51,7 @@ public class Obstacle extends Entity {
         return y;
     }
 
-    public double hitY() { // 메테오 히트박스는 gif 상 하단 끝부분
+    public double hitY() {      // @JW : 메테오 히트박스는 gif 상 하단 끝부분
         return this.y + 120;
     }
 

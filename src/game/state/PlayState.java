@@ -22,9 +22,14 @@ public class PlayState extends GameState {
 	private Obstacle obstacle;
 	private ArrayList<Effect> effects;
 
-	// @JW : enemies spawn related, milliseconds.
+	// @JW : enemies spawning, milliseconds.
 	private final int SPAWN_DELAY_E = 3000;
 	private long lastSpawnTime_E;
+
+	// @JW : enemies scailing, milliseconds.
+	private final int SCALE_DELAY_E_2 = 10000;
+	private final int SCALE_DELAY_E_3 = 10000;
+	private long lastScaleTime_E;
 
 	// @JW : obstacle trigger, milliseconds.
 	private final int SPAWN_DELAY_O = 7000;
@@ -34,12 +39,11 @@ public class PlayState extends GameState {
 		super(gsm);
 		background = new Background();
 		player = new Player(this);
-
 		enemies = new ArrayList<Enemy>();		// @JW : Enemy 객체에 state 대입은 아래 spawn 메소드에서
-		spawnE();
-		spawnO();
 		bullets = new ArrayList<Bullet>();
 		effects = new ArrayList<Effect>();
+		spawnE();
+		spawnO();
 	}
 
 	@Override
@@ -59,24 +63,47 @@ public class PlayState extends GameState {
 
 	public void spawnE() {
 		lastSpawnTime_E = System.currentTimeMillis();
+		lastScaleTime_E = System.currentTimeMillis();
 
 		int x = 0;
+
+		if(System.currentTimeMillis() - lastScaleTime_E >= SCALE_DELAY_E_2){
+
+
+			lastScaleTime_E = System.currentTimeMillis();
+		}
+		else if(System.currentTimeMillis() - lastScaleTime_E >= SCALE_DELAY_E_3)
+		{
+
+
+		}
+
 		for(int i = 0 ; i < 5; i++)
 		{
 			Enemy tempE = new Enemy(x, this);
 			enemies.add(tempE);
 			x += 78;
 		}
+
+
 	}
 	public void updateE(double dt) {
 		if (System.currentTimeMillis() - lastSpawnTime_E >= SPAWN_DELAY_E){
 			if(enemies.isEmpty())
 				spawnE();
+			else
+			{
+				enemies.clear();
+				spawnE();
+			}
 
-			enemies.clear();
-			spawnE();
+//			if(enemies.isEmpty())
+//				spawnE();
+//
+//			enemies.clear();
+//			spawnE();
+//
 		}
-		
 		for (int i = enemies.size() - 1; i >= 0; i--) {
 			enemies.get(i).enemyHit();
 
@@ -88,9 +115,9 @@ public class PlayState extends GameState {
 			}
 		}
 		
+		// effect
 		for (Effect e : effects)
 			e.play(dt);
-		
 		for (int i = effects.size() - 1; i >= 0; i--) {
 			Effect e = effects.get(i);
 			
