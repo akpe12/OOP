@@ -124,6 +124,15 @@ public class Player extends Entity {
 		else
 			player_inv.paintIcon(null,g,(int)x,(int)y);
 	}
+	
+	// @YCW: add isDead for checking player is dead
+	public boolean isDead() {
+		if (getHp() <= 0) {
+			return true;
+		}
+		
+		return false;
+	}
 
 	// @YCW: add getX for x position of bullet
 	public double getX() {

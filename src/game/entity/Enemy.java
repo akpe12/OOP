@@ -15,17 +15,17 @@ import game.state.GameState;
 import game.state.PlayState;
 
 public class Enemy extends Entity {
+    private GameState state;
 
-    public static ImageIcon enemy = new ImageIcon("image/enemy_mov.gif");
+    public static ImageIcon enemy_1 = new ImageIcon("image/enemy_mov.gif");
+    public static ImageIcon enemy_2 = new ImageIcon("image/enemy_mov.gif");
+    public static ImageIcon enemy_3 = new ImageIcon("image/enemy_mov.gif");
 
     private double speed;
 
-    // FIXME
-    private GameState state;
-
     public Enemy(int x, GameState state) {
         super(x, -70, 60, 60, 100);      // @JW 사이즈 조절?
-        this.speed = 3;
+        this.speed = 2;
 
         this.state = state;
     }
@@ -36,10 +36,6 @@ public class Enemy extends Entity {
 
     public boolean isAlive(){
         return this.hp > 0;
-    }
-
-    public boolean isOut(){     // FIXME
-        return this.y > HEIGHT;
     }
 
     public void enemyHit(){
@@ -60,7 +56,9 @@ public class Enemy extends Entity {
     }
 
     public void render(Graphics g) {
-        enemy.paintIcon(null, g, (int)x, (int)y);
+        enemy_1.paintIcon(null, g, (int)x, (int)y);
+//        enemy_2.paintIcon(null, g, (int)x, (int)y);
+//        enemy_3.paintIcon(null, g, (int)x, (int)y);
     }
 
     public double getX(){

@@ -11,7 +11,8 @@ public class GameStateManager {
 	private GameState state;
 
 	public GameStateManager() {
-		state = new PlayState(this);
+//		state = new PlayState(this);
+		state = new IntroState(this);
 	}
 
 	public void update(double dt) {

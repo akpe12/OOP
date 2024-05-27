@@ -15,10 +15,14 @@ public class KeyHandler implements KeyListener {
 	
     public Key left = new Key();
     public Key right = new Key();
+    // @YCW: add anyKey to detect any pressed key
+    public Key anyKey = new Key();
     
     public void toggle(KeyEvent e, boolean pressed) {
         if(e.getKeyCode() == KeyEvent.VK_LEFT) left.setPressed(pressed);
         if(e.getKeyCode() == KeyEvent.VK_RIGHT) right.setPressed(pressed);
+        // @YCW: if any key is pressed, the boolean pressed is set to be true
+        anyKey.setPressed(pressed);
     }
 
 	@Override
