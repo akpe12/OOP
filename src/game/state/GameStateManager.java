@@ -34,6 +34,4 @@ public class GameStateManager {
 	public GameState getState() {
 		return state;
 	}
-
-	// PR test
 }

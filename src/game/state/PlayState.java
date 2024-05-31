@@ -15,6 +15,12 @@ import game.util.MouseHandler;
 
 public class PlayState extends GameState {
 
+	// @JW : Scailing, milliseconds.
+	private int scale = 1;
+	private final int SCALE_DELAY_2 = 5000;
+	private final int SCALE_DELAY_3 = 10000;
+	private long lastStartTime;
+
 	private Background background;
 	private Player player;
 	private ArrayList<Enemy> enemies;
@@ -25,11 +31,6 @@ public class PlayState extends GameState {
 	// @JW : enemies spawning, milliseconds.
 	private final int SPAWN_DELAY_E = 3000;
 	private long lastSpawnTime_E;
-
-	// @JW : enemies scailing, milliseconds.
-	private final int SCALE_DELAY_E_2 = 10000;
-	private final int SCALE_DELAY_E_3 = 10000;
-	private long lastScaleTime_E;
 
 	// @JW : obstacle trigger, milliseconds.
 	private final int SPAWN_DELAY_O = 7000;
@@ -44,10 +45,14 @@ public class PlayState extends GameState {
 		effects = new ArrayList<Effect>();
 		spawnE();
 		spawnO();
+
+		lastStartTime = System.currentTimeMillis();		// @JW : for Scailing
 	}
 
 	@Override
 	public void update(double dt) {
+		updateS();	// Scale
+
 		background.move(dt);
 
 		player.move(dt);
@@ -60,34 +65,38 @@ public class PlayState extends GameState {
 		
 		isGameOver(); // @YCW: check isGameOver for changing states
 	}
+	
+	// @JW : 게임 스케일링 관련
+	public void updateS() {
+		long elapsed = System.currentTimeMillis() - lastStartTime;
 
-	public void spawnE() {
+		if(elapsed >= SCALE_DELAY_3)
+			scale = 3;
+		else if(elapsed >= SCALE_DELAY_2)
+			scale = 2;
+	}
+
+	public void spawnE(){
 		lastSpawnTime_E = System.currentTimeMillis();
-		lastScaleTime_E = System.currentTimeMillis();
 
+		if(scale == 1)
+			spawnE_sc(100,2,1);
+		else if(scale == 2)
+			spawnE_sc(150,3,2);
+		else if(scale == 3)
+			spawnE_sc(200,4,3);
+	}
+	public void spawnE_sc(int hp, double speed, int scale){
 		int x = 0;
-
-		if(System.currentTimeMillis() - lastScaleTime_E >= SCALE_DELAY_E_2){
-
-
-			lastScaleTime_E = System.currentTimeMillis();
-		}
-		else if(System.currentTimeMillis() - lastScaleTime_E >= SCALE_DELAY_E_3)
-		{
-
-
-		}
-
 		for(int i = 0 ; i < 5; i++)
 		{
-			Enemy tempE = new Enemy(x, this);
+			Enemy tempE = new Enemy(x, this, hp, speed, scale);
 			enemies.add(tempE);
 			x += 78;
 		}
-
-
 	}
 	public void updateE(double dt) {
+		
 		if (System.currentTimeMillis() - lastSpawnTime_E >= SPAWN_DELAY_E){
 			if(enemies.isEmpty())
 				spawnE();
@@ -97,13 +106,15 @@ public class PlayState extends GameState {
 				spawnE();
 			}
 
-//			if(enemies.isEmpty())
-//				spawnE();
-//
-//			enemies.clear();
-//			spawnE();
-//
+			// 문제생길시 복원
+		//		if(enemies.isEmpty())
+		//			spawnE();
+		//
+		//		enemies.clear();
+		//		spawnE();
+
 		}
+
 		for (int i = enemies.size() - 1; i >= 0; i--) {
 			enemies.get(i).enemyHit();
 
@@ -161,6 +172,7 @@ public class PlayState extends GameState {
 
 	@Override
 	public void render(Graphics2D g) {
+
 		background.render(g);
 		player.render(g);
 
