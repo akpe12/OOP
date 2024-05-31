@@ -15,17 +15,17 @@ import game.main.Resource;
 public class Background {
 
 	private BufferedImage img;
-	
+
 	private int width = GamePanel.width;
 	private int height = GamePanel.height;
-	
+
 	private int speed;
 
 	private double y = 0;
 
 	public Background() {
 		try {
-			img = ImageIO.read(new File("image/backgroundMap.png"));
+			img = ImageIO.read(new File("image/Map_1.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -48,9 +48,9 @@ public class Background {
 
 		// @YCW: added below lines for making background darker in EndState
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // Adjust alpha for darkness level
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, width, height);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)); // Reset alpha
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, width, height);
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)); // Reset alpha
 	}
 
 }

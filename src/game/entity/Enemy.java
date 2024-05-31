@@ -18,14 +18,19 @@ public class Enemy extends Entity {
     private GameState state;
 
     public static ImageIcon enemy_1 = new ImageIcon("image/enemy_mov.gif");
-    public static ImageIcon enemy_2 = new ImageIcon("image/enemy_mov.gif");
-    public static ImageIcon enemy_3 = new ImageIcon("image/enemy_mov.gif");
+    // FIXME gif 대체
+    public static ImageIcon enemy_2 = new ImageIcon("image/dragon_02.png");
+    public static ImageIcon enemy_3 = new ImageIcon("image/dragon_bomb.png");
 
     private double speed;
+    private int hp;
+    private int scale;
 
-    public Enemy(int x, GameState state) {
-        super(x, -70, 60, 60, 100);      // @JW 사이즈 조절?
-        this.speed = 2;
+    public Enemy(int x, GameState state, int hp, double speed, int scale) {
+        super(x, -70, 60, 60);      // @JW 사이즈 조절?
+        this.speed = speed;
+        this.hp = hp;
+        this.scale = scale;
 
         this.state = state;
     }
@@ -56,9 +61,12 @@ public class Enemy extends Entity {
     }
 
     public void render(Graphics g) {
-        enemy_1.paintIcon(null, g, (int)x, (int)y);
-//        enemy_2.paintIcon(null, g, (int)x, (int)y);
-//        enemy_3.paintIcon(null, g, (int)x, (int)y);
+        if(scale == 1)
+            enemy_1.paintIcon(null, g, (int)x, (int)y);
+        else if(scale == 2)
+            enemy_2.paintIcon(null, g, (int)x, (int)y);
+        else if(scale == 3)
+            enemy_3.paintIcon(null, g, (int)x, (int)y);
     }
 
     public double getX(){
