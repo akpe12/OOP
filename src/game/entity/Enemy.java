@@ -17,10 +17,9 @@ import game.state.PlayState;
 public class Enemy extends Entity {
     private GameState state;
 
-    public static ImageIcon enemy_1 = new ImageIcon("image/enemy_mov.gif");
-    // FIXME gif 대체
-    public static ImageIcon enemy_2 = new ImageIcon("image/dragon_02.png");
-    public static ImageIcon enemy_3 = new ImageIcon("image/dragon_bomb.png");
+    public static ImageIcon enemy_1 = new ImageIcon("image/monster/dragon_1/dragon_1_170_140_90.gif");
+    public static ImageIcon enemy_2 = new ImageIcon("image/monster/dragon_2/dragon_2_170_140_90.gif");
+    public static ImageIcon enemy_3 = new ImageIcon("image/monster/dragon_3/dragon_3_170_140_90.gif");
 
     private double speed;
     private int hp;
@@ -39,7 +38,7 @@ public class Enemy extends Entity {
         y += this.speed * (dt * 100);
     }
 
-    public boolean isAlive(){
+    public boolean isAlive() {
         return this.hp > 0;
     }
 

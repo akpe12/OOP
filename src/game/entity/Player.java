@@ -19,8 +19,9 @@ import static java.lang.Math.abs;
 
 public class Player extends Entity {
 
-	public static ImageIcon player = new ImageIcon("image/player.png");
-	public static ImageIcon player_inv = new ImageIcon("image/player_inv.gif");
+	// FIXME gif
+	public static ImageIcon player = new ImageIcon("image/player/player.png");
+	public static ImageIcon player_inv = new ImageIcon("image/player/player_inv.gif");
 
 	private GameState state;
 	private int hp;

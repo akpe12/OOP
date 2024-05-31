@@ -9,9 +9,9 @@ import javax.swing.*;
 public class Obstacle extends Entity {
     private GameState state;
 
-    public static ImageIcon warning_1 = new ImageIcon("image/warning_stamp.gif");
-    public static ImageIcon warning_2 = new ImageIcon("image/warning_sign_35.png");
-    public static ImageIcon obstacle = new ImageIcon("image/meteo_4.gif");
+    public static ImageIcon warning_1 = new ImageIcon("image/obstacle/warning_stamp.gif");
+    public static ImageIcon warning_2 = new ImageIcon("image/obstacle/warning_sign_35.png");
+    public static ImageIcon obstacle = new ImageIcon("image/obstacle/meteo_4.gif");
 
     private double speed;
 

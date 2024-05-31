@@ -79,12 +79,13 @@ public class PlayState extends GameState {
 	public void spawnE(){
 		lastSpawnTime_E = System.currentTimeMillis();
 
+		// @JW : suppose the bullet damage is 100
 		if(scale == 1)
-			spawnE_sc(100,2,1);
+			spawnE_sc(1200,3,1);
 		else if(scale == 2)
-			spawnE_sc(150,3,2);
+			spawnE_sc(1500,4,2);
 		else if(scale == 3)
-			spawnE_sc(200,4,3);
+			spawnE_sc(1800,5,3);
 	}
 	public void spawnE_sc(int hp, double speed, int scale){
 		int x = 0;

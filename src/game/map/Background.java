@@ -25,7 +25,7 @@ public class Background {
 
 	public Background() {
 		try {
-			img = ImageIO.read(new File("image/Map_1.png"));
+			img = ImageIO.read(new File("image/map/Map_1.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
