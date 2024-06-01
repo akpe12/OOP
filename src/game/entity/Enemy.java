@@ -26,7 +26,7 @@ public class Enemy extends Entity {
     private int scale;
 
     public Enemy(int x, GameState state, int hp, double speed, int scale) {
-        super(x, -70, 60, 60);      // @JW 사이즈 조절?
+        super(x - 8, -70, 60, 60);      // @JW 사이즈 조절?
         this.speed = speed;
         this.hp = hp;
         this.scale = scale;

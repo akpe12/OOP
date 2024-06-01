@@ -70,10 +70,14 @@ public class PlayState extends GameState {
 	public void updateS() {
 		long elapsed = System.currentTimeMillis() - lastStartTime;
 
-		if(elapsed >= SCALE_DELAY_3)
+		if(elapsed >= SCALE_DELAY_3){
 			scale = 3;
-		else if(elapsed >= SCALE_DELAY_2)
+			background.modifySpd(220);
+		}
+		else if(elapsed >= SCALE_DELAY_2){
 			scale = 2;
+			background.modifySpd(170);
+		}
 	}
 
 	public void spawnE(){

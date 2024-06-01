@@ -19,7 +19,7 @@ public class Background {
 	private int width = GamePanel.width;
 	private int height = GamePanel.height;
 
-	private int speed;
+	private int speed = 120;
 
 	private double y = 0;
 
@@ -29,7 +29,6 @@ public class Background {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.speed = 100;
 	}
 
 	public void move(double dt) {
@@ -51,6 +50,10 @@ public class Background {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, width, height);
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)); // Reset alpha
+	}
+
+	public void modifySpd(int spd) {
+		this.speed = spd;
 	}
 
 }

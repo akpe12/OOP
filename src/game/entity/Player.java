@@ -1,12 +1,7 @@
 package game.entity;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import game.state.GameState;
 import game.state.PlayState;
@@ -20,8 +15,8 @@ import static java.lang.Math.abs;
 public class Player extends Entity {
 
 	// FIXME gif
-	public static ImageIcon player = new ImageIcon("image/player/player.png");
-	public static ImageIcon player_inv = new ImageIcon("image/player/player_inv.gif");
+	public static ImageIcon player = new ImageIcon("image/player/player_78x78.gif");
+	public static ImageIcon player_inv = new ImageIcon("image/player/player_78x78_hit.gif");
 
 	private GameState state;
 	private int hp;
