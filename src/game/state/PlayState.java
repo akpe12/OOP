@@ -101,7 +101,6 @@ public class PlayState extends GameState {
 		}
 	}
 	public void updateE(double dt) {
-		
 		if (System.currentTimeMillis() - lastSpawnTime_E >= SPAWN_DELAY_E){
 			if(enemies.isEmpty())
 				spawnE();
@@ -110,14 +109,6 @@ public class PlayState extends GameState {
 				enemies.clear();
 				spawnE();
 			}
-
-			// 문제생길시 복원
-		//		if(enemies.isEmpty())
-		//			spawnE();
-		//
-		//		enemies.clear();
-		//		spawnE();
-
 		}
 
 		for (int i = enemies.size() - 1; i >= 0; i--) {
@@ -162,10 +153,8 @@ public class PlayState extends GameState {
 		obstacle = new Obstacle(this, player.getX());
 	}
 	public void updateO(double dt) {
-		if (System.currentTimeMillis() - lastSpawnTime_O >= SPAWN_DELAY_O) {
-
+		if (System.currentTimeMillis() - lastSpawnTime_O >= SPAWN_DELAY_O)
 			spawnO();
-		}
 
 		obstacle.move(dt);
 	}
@@ -177,7 +166,6 @@ public class PlayState extends GameState {
 
 	@Override
 	public void render(Graphics2D g) {
-
 		background.render(g);
 		player.render(g);
 
@@ -185,10 +173,8 @@ public class PlayState extends GameState {
 			b.render(g);
 
 		for(Enemy e : enemies)
-		{
 			if (e != null)
 				e.render(g);
-		}
 
 		obstacle.render(g);
 		
@@ -198,9 +184,8 @@ public class PlayState extends GameState {
 	
 	// @YCW: added below function for changing state to EndState when the player is dead
 	public void isGameOver() {
-		if (player.isDead() == true) {
+		if (player.isDead() == true)
 			gsm.setState(new EndState(gsm));
-		}
 	}
 
 	public ArrayList<Bullet> getBullets() {
