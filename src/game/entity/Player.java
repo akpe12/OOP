@@ -1,6 +1,9 @@
 package game.entity;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import game.state.GameState;
@@ -8,13 +11,18 @@ import game.state.PlayState;
 import game.util.KeyHandler;
 import game.util.MouseHandler;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import static java.lang.Math.abs;
 
 public class Player extends Entity {
 
-	// FIXME gif
+	public static ImageIcon hp3 = new ImageIcon("image/hp/hp3_120x33.png");
+	public static ImageIcon hp2 = new ImageIcon("image/hp/hp2_120x33.png");
+	public static ImageIcon hp1 = new ImageIcon("image/hp/hp1_120x33.png");
+	public static ImageIcon hp0 = new ImageIcon("image/hp/hp0_120x33.png");
+
 	public static ImageIcon player = new ImageIcon("image/player/player_78x78.gif");
 	public static ImageIcon player_inv = new ImageIcon("image/player/player_78x78_hit.gif");
 
@@ -35,21 +43,19 @@ public class Player extends Entity {
 		this.hp = 3; // @YCW: default hp value = 3
 		this.speed = 500;
 		this.state = state;
+
 	}
 
 	public void move(double dt) {
-		//	if (isInvincible == false) {
-		if (left) {
+		if (left)
 			x -= this.speed * dt;
-		}
-		if (right) {
+		if (right)
 			x += this.speed * dt;
-		}
-		//	}
 	}
 	public void fire(double dt) {
 		if (isInvincible == false) {
 			elapsed += dt;
+
 			if (elapsed > bulletPeriod) {
 				Bullet bullet = new Bullet((int) x);
 				((PlayState) state).getBullets().add(bullet);
@@ -99,13 +105,14 @@ public class Player extends Entity {
 			}
 
 		if (isCollision == true) {
-			hp = hp - 1;
+			hp--;
 			isCollision = false;
 			isInvincible = true; // if isInvincible = true, then move, fire, render functions are stopped.
 		}
 
 		if (isInvincible == true) {
 			elapsedInvincibleTime += dt;
+
 			if (elapsedInvincibleTime > invincibleTime) {
 				isInvincible = false;
 
@@ -115,18 +122,28 @@ public class Player extends Entity {
 	}
 
 	public void render(Graphics2D g) {
+
+		if(this.hp == 3)
+			hp3.paintIcon(null,g,0,0);
+		else if (this.hp == 2)
+			hp2.paintIcon(null,g,0,0);
+		else if(this.hp == 1)
+			hp1.paintIcon(null,g,0,0);
+		else if(this.hp == 0)
+			hp0.paintIcon(null,g,0,0);
+
 		if (!isInvincible)
 			player.paintIcon(null,g,(int)x,(int)y);
 		else
 			player_inv.paintIcon(null,g,(int)x,(int)y);
+
 	}
-	
+
 	// @YCW: add isDead for checking player is dead
 	public boolean isDead() {
-		if (getHp() <= 0) {
+		if (getHp() <= 0)
 			return true;
-		}
-		
+
 		return false;
 	}
 

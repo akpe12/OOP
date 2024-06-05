@@ -114,9 +114,9 @@ public class PlayState extends GameState {
 		for (int i = enemies.size() - 1; i >= 0; i--) {
 			enemies.get(i).enemyHit();
 
-			if (enemies.get(i).isAlive()) {
+			if (enemies.get(i).isAlive())
 				enemies.get(i).move(dt);
-			} else {
+			else {
 				enemies.get(i).dead();
 				enemies.remove(i);
 			}
@@ -128,9 +128,8 @@ public class PlayState extends GameState {
 		for (int i = effects.size() - 1; i >= 0; i--) {
 			Effect e = effects.get(i);
 			
-			if (e.isFinished()) {
+			if (e.isFinished())
 				effects.remove(i);
-			}
 		}
 	}
 
@@ -143,6 +142,7 @@ public class PlayState extends GameState {
 				bullets.remove(bullet);
 				continue;
 			}
+
 			i++;
 		}
 	}
@@ -207,5 +207,6 @@ public class PlayState extends GameState {
 	public ArrayList<Effect> getEffects(){
 		return effects;
 	}
+
 }
 
