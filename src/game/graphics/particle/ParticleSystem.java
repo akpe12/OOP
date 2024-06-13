@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import game.graphics.particle.shape.Circle;
+import game.graphics.particle.shape.Mesh;
 import game.graphics.particle.shape.Shape;
 import game.math.Range;
 import game.math.Vector2f;
-import game.util.RandomUtil;
+import game.utils.ImageProcessor;
+import game.utils.RandomMethod;
 
 public class ParticleSystem {
 	
@@ -42,6 +44,8 @@ public class ParticleSystem {
 	private Shape shape;
 	
 	// Color over lifetime
+	private float alphaSlope;
+	
 	// Size over lifetime
 	
 	// Velocity over lifetime
@@ -69,6 +73,10 @@ public class ParticleSystem {
 		startSpeed = new Range<Float>(start);
 	}
 	
+	public void setStartSize(float start) {
+		startSize = new Range<Float>(start);
+	}
+	
 	public void setStartSize(float start, float end) {
 		startSize = new Range<Float>(start, end);
 	}
@@ -94,6 +102,8 @@ public class ParticleSystem {
 		
 		if (shape instanceof Circle) {
 			initCircle();
+		} else if (shape instanceof Mesh) {
+			initMesh();
 		}
 		
 		particleTimer = 0;
@@ -107,13 +117,13 @@ public class ParticleSystem {
 		
 		for (int i = 0; i < burstsCount; i++) {
 			//
-			double lifetime = RandomUtil.nextDouble(startLifetime.start, startLifetime.end);
-			float speed = RandomUtil.nextFloat(startSpeed.start, startSpeed.end);
-			float size = RandomUtil.nextFloat(startSize.start, startSize.end);
-			float rotation = RandomUtil.nextFloat(startRotation.start, startRotation.end);
+			double lifetime = RandomMethod.nextDouble(startLifetime.start, startLifetime.end);
+			float speed = RandomMethod.nextFloat(startSpeed.start, startSpeed.end);
+			float size = RandomMethod.nextFloat(startSize.start, startSize.end);
+			float rotation = RandomMethod.nextFloat(startRotation.start, startRotation.end);
 			
 			//
-			float scale = RandomUtil.nextFloat(radius * (1 - radiusThickness), radius);
+			float scale = RandomMethod.nextFloat(radius * (1 - radiusThickness), radius);
 			
 			Vector2f dPos = Vector2f.createRandom(scale);
 			Vector2f startPos = this.origin.add(dPos);
@@ -126,6 +136,15 @@ public class ParticleSystem {
 		}
 	}
 	
+	private void initMesh() {
+		double lifetime = RandomMethod.nextDouble(startLifetime.start, startLifetime.end);
+		
+		float size = 1.2f;
+		Particle p = new Particle(lifetime, size, origin, new Color(255, 200, 200), 0.4f);
+		alphaSlope = (float)(1f / (p.getLifetime() * 144));
+		particles.add(p);
+	}
+	
 	public void play(double dt) {
 		if (initiated) {
 			particleTimer += dt;
@@ -134,21 +153,51 @@ public class ParticleSystem {
 				finished = true;
 			}
 			
-			for (int i = particles.size() - 1; i >= 0; i--) {
-				Particle p = particles.get(i);
-				
-				if (p.isLifetimeTimerOver(p.getLifetime())) {
-					particles.remove(i);
-				}
+			if (shape instanceof Circle) {
+				updateCircle(dt);
+			} else if (shape instanceof Mesh) {
+				updateMesh(dt);
+			}
+		}
+	}
+	
+	private void updateCircle(double dt) {
+		for (int i = particles.size() - 1; i >= 0; i--) {
+			Particle p = particles.get(i);
+			
+			p.updateTimer(dt);
+			p.setVelocity(p.getVelocity().scale(0.95f));
+			p.setSize(p.getSize() * 0.98f);
+			
+			Vector2f position = p.getPosition().add(p.getVelocity());
+			p.setPosition(position);
+			
+			if (p.isLifetimeTimerOver(p.getLifetime())) {
+				particles.remove(i);
+			}
+		}
+	}
+	
+	private double timer;
+	private void updateMesh(double dt) {
+		for (int i = particles.size() - 1; i >= 0; i--) {
+			Particle p = particles.get(i);
+			
+			p.updateTimer(dt);
+			timer += dt;
+			
+			Color color = p.getColor();
+			p.setColor(color);
+			
+			float alpha = p.getAlphaIntensity();
+			if (timer > (p.getLifetime()/2)) {
+				alpha += alphaSlope;
 			}
 			
-			for (Particle p : particles) {
-				p.updateTimer(dt);
-				p.setVelocity(p.getVelocity().scale(0.95f));
-				p.setSize(p.getSize() * 0.98f);
-				
-				Vector2f position = p.getPosition().add(p.getVelocity());
-				p.setPosition(position);
+			p.setAlphaIntensity(alpha);
+			
+			if (p.isLifetimeTimerOver(p.getLifetime())) {
+				particles.remove(i);
 			}
 		}
 	}
@@ -160,7 +209,18 @@ public class ParticleSystem {
 	public void render(Graphics2D g) {
 		if (initiated) {
 			for (int i = 0; i < particles.size(); i++) {
-				particles.get(i).draw(g, img);
+				if (shape instanceof Mesh) {
+					Particle p = particles.get(i);
+					
+					float alpha = p.getAlphaIntensity();
+					BufferedImage filteredImg = ImageProcessor.applyColorFilter(img, new Color(255, 145, 105), 1f, alpha);
+					p.draw(g, filteredImg);
+					p.setSize(0.5f);
+					filteredImg = ImageProcessor.applyColorFilter(img, Color.WHITE, 1f, alpha);
+					p.draw(g, filteredImg);
+					p.setSize(1.2f);
+				}
+				else particles.get(i).draw(g, img);
 			}
 		}
 	}

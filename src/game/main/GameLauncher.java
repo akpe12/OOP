@@ -7,6 +7,8 @@ public class GameLauncher {
 	}
 
 	public GameLauncher() {
-		new Window();
+		new Game();
 	}
+	
 }
+

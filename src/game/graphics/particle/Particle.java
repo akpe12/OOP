@@ -1,5 +1,6 @@
 package game.graphics.particle;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -9,9 +10,10 @@ import game.math.Vector2f;
 public class Particle {
 	private double lifetime;
 	private float speed;
-	private float size;
+	private float size = 1;
 	private float rotation;
 	private Color color;
+	private float alphaIntensity;
 	
 	private Vector2f position;  // center position
 	private Vector2f velocity;
@@ -26,6 +28,14 @@ public class Particle {
 		
 		this.position = position;
 		this.velocity = velocity;
+	}
+	
+	public Particle(double lifetime, float size, Vector2f position, Color color, float alphaIntensity) {
+		this.lifetime = lifetime;
+		this.size = size;
+		this.position = position;
+		this.color = color;
+		this.alphaIntensity = alphaIntensity;
 	}
 	
 	public void updateTimer(double dt) {
@@ -98,6 +108,14 @@ public class Particle {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	
+	public float getAlphaIntensity() {
+		return alphaIntensity;
+	}
+
+	public void setAlphaIntensity(float alphaIntensity) {
+		this.alphaIntensity = alphaIntensity;
 	}
 
 	public Vector2f getPosition() {
