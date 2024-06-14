@@ -18,12 +18,12 @@ public class Obstacle extends Entity {
 
     public static BufferedImage warning_1;
     public static BufferedImage warning_2;
-    public static ImageIcon obstacle = new ImageIcon("images/entities/meteo.gif");
+    public static ImageIcon obstacle = new ImageIcon("images/entities/obstacles/meteo.gif");
     
     static {
     	try {
-			warning_1 = ImageIO.read(new File("images/entities/warning_stamp.png"));
-	    	warning_2 = ImageIO.read(new File("images/entities/warning_line.png"));
+			warning_1 = ImageIO.read(new File("images/entities/obstacles/warning_stamp.png"));
+	    	warning_2 = ImageIO.read(new File("images/entities/obstacles/warning_line.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

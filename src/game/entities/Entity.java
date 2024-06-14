@@ -83,7 +83,7 @@ public abstract class Entity extends GameObject {
 		}
 	}
     
-    protected void drawHitboxs(Graphics2D g) {
+    public void drawHitboxs(Graphics2D g) {
     	for (Rectangle2D.Float h : hitboxs) {
     		g.setColor(Color.PINK);
     		g.drawRect((int)h.x, (int)h.y, (int)h.width, (int)h.height);

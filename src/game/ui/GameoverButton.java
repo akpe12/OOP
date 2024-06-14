@@ -19,7 +19,7 @@ public class GameoverButton extends GameObject {
 	private static BufferedImage wings;
 	private static BufferedImage replayPhrase;
 	
-	private static String gameoverButtonImgPath = "images/ui/gameover_button/";
+	private static String gameoverButtonImgPath = "images/ui/gameover/button/";
 	
 	static {
 		loadImg();

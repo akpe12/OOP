@@ -53,9 +53,6 @@ public class Bullet extends Entity {
 	public void update(double dt) {
 		super.update(dt);
 		
-		hitbox.x = centerX - hitbox.width / 2;
-		hitbox.y = centerY - hitbox.height / 2;
-		
 		move(dt);
         
         if (isOut()) {
@@ -79,7 +76,7 @@ public class Bullet extends Entity {
     }
 
     public void hit(Enemy e) {
-    	e.setHp(e.getHp() - damage);
+    	e.setCurrentHp(e.getCurrentHp() - damage);
     }
     
 	public Rectangle2D.Float getHitbox() {

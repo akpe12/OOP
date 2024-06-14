@@ -18,9 +18,9 @@ public class Intro extends Gamestate {
 	private static BufferedImage illustImg;
 	private static BufferedImage introPhraseImg;
 
-	private static String logoImgPath = "images/intro/logo.png";
-	private static String illustImgPath = "images/intro/illust_01.png";
-	private static String introPhraseImgPath = "images/intro/phrase.png";
+	private static String logoImgPath = "images/ui/intro/logo.png";
+	private static String illustImgPath = "images/ui/intro/illust_01.png";
+	private static String introPhraseImgPath = "images/ui/intro/phrase.png";
 	
 	static {
 		loadImg();

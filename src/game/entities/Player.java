@@ -2,32 +2,19 @@ package game.entities;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import game.main.Game;
-import game.states.Playing;
 import game.utils.Timer;
 
 public class Player extends Entity {
 
-	private static BufferedImage player;
-	
-	static {
-		loadImg("images/entities/player.png");
-	}
-	
-	private static void loadImg(String path) {
-		try {
-			player = ImageIO.read(new File(path));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	private static ImageIcon player = new ImageIcon("images/entities/player.gif");
 	
 	private Rectangle2D.Float bodyHitbox;
 	private Rectangle2D.Float wingHitbox;
@@ -49,22 +36,23 @@ public class Player extends Entity {
 	public Player() {
 		super();
 		
-		width = player.getWidth();
-		height = player.getHeight();
+		width = 80.0f;
+		height = 80.0f;
 		x = (Game.WIDTH - width) / 2;
-		y = Game.HEIGHT - 100;
+		y = Game.HEIGHT - 100.0f;
 		
 		hp = 3;
 		speed = 400.0f;
 		
 		float bodyWidth = 17.0f;
-		bodyHitbox = new Rectangle2D.Float(centerX - bodyWidth / 2, y, bodyWidth, height);
+		float bodyHeight = 50.0f;
+		bodyHitbox = new Rectangle2D.Float(centerX - bodyWidth / 2, centerY - bodyHeight / 2, bodyWidth, bodyHeight);
 		hitboxs.add(bodyHitbox);
 		
-		float wingWidth = 50.0f;
+		float wingWidth = 60.0f;
 		float wingHeight = 25.0f;
 		wingHitbox = new Rectangle2D.Float(
-				centerX - wingWidth / 2, centerY - wingHeight, wingWidth, wingHeight);
+				centerX - wingWidth / 2, centerY - wingHeight / 2, wingWidth, wingHeight);
 		hitboxs.add(wingHitbox);
 		
 		fireTimer = new Timer(0.08, e -> {fire();});
@@ -136,7 +124,7 @@ public class Player extends Entity {
 	}
 	
 	public void fire() {
-		Bullet b = new Bullet((int)x + player.getWidth() / 2);
+		Bullet b = new Bullet((int)(x + width / 2));
 		gsm.getPlaying().getBullets().add(b);
 	}
 
@@ -145,21 +133,21 @@ public class Player extends Entity {
 		List<Enemy> enemies = gsm.getPlaying().getEnemies();
 		List<Obstacle> obstacles = gsm.getPlaying().getObstacles();
 
-		for(int i = 0; i < enemies.size(); i++) {
+		for (int i = 0; i < enemies.size(); i++) {
 			Enemy e = enemies.get(i);
 			
-			if(bodyHitbox.intersects(e.getHitbox()) || wingHitbox.intersects(e.getHitbox())) {
-				if(invincible == false) {
+			if (bodyHitbox.intersects(e.getHitbox()) || wingHitbox.intersects(e.getHitbox())) {
+				if (invincible == false) {
 					colliding = true;
 				}
 			}
 		}
 
-		for(int i = 0; i < obstacles.size(); i++) {
+		for (int i = 0; i < obstacles.size(); i++) {
 			Obstacle o = obstacles.get(i);
 			
-			if(bodyHitbox.intersects(o.getHitbox()) || wingHitbox.intersects(o.getHitbox())) {
-				if(invincible == false) {
+			if (bodyHitbox.intersects(o.getHitbox()) || wingHitbox.intersects(o.getHitbox())) {
+				if (invincible == false) {
 					colliding = true;
 				}
 			}
@@ -183,21 +171,15 @@ public class Player extends Entity {
 		
 		if (visible) {
 			if (blinkTimer.getCount() % 2 == 0) {
-				g.drawImage(player, (int)x, (int)y, player.getWidth(), player.getHeight(), null);
+				player.paintIcon(null, g, (int)x, (int)y);
 			}
 		}
 	}
 	
-	// @YCW: add isDead for checking player is dead
 	public boolean isDead() {
-		if (getHp() <= 0) {
-			return true;
-		}
-		
-		return false;
+		return hp <= 0;
 	}
 
-	// @YCW: add getX for x position of bullet
 	public float getX() {
 		return x;
 	}

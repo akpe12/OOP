@@ -13,6 +13,8 @@ import game.entities.Player;
 import game.entities.effect.Effect;
 import game.entities.map.Background;
 import game.main.Game;
+import game.ui.PlayerHp;
+import game.utils.RandomMethod;
 import game.utils.Timer;
 
 public class Playing extends Gamestate {
@@ -31,6 +33,11 @@ public class Playing extends Gamestate {
 	private Timer spawnEnemiesTimer;
 	private Timer spawnObstacleTimer;
 	private Timer speedUpTimer;
+	private Timer levelUpTimer;
+	
+	private PlayerHp playerHpUi;
+	
+	private int level;
 
 	public Playing() {
 		timers = new ArrayList<>();
@@ -75,17 +82,24 @@ public class Playing extends Gamestate {
 		spawnEnemiesTimer = new Timer(4.0, 3.0, e -> {spawnEnemies();});
 		spawnObstacleTimer = new Timer(5.0, 0, e -> {spawnObstacle();});
 		speedUpTimer = new Timer(1.0, e -> {speedUp();});
+		levelUpTimer = new Timer(15.0, e -> {levelUp();});
 		
 		timers.add(spawnEnemiesTimer);
 		timers.add(spawnObstacleTimer);
 		timers.add(speedUpTimer);
+		timers.add(levelUpTimer);
 		
 		spawnEnemiesTimer.start();
 		spawnObstacleTimer.start();
 		speedUpTimer.start();
+		levelUpTimer.start();
 		
 		backgrounds.add(new Background());
 		players.add(new Player());
+		
+		playerHpUi = new PlayerHp();
+		
+		level = 0;
 
 		ap.playSong(AudioPlayer.PLAYING);
 	}
@@ -113,19 +127,44 @@ public class Playing extends Gamestate {
 		
 	}
 
-	public void spawnEnemies() {
-		float enemySize = 70.0f;
-		float interval = (Game.WIDTH - enemySize) / 4;
+	float enemyWidth = 90.0f;  // FIXME
+	float enemyOffset = 4.0f;
+	float interval = (Game.WIDTH + enemyOffset * 4 - enemyWidth) / 4;
+	
+	float[][] enemyTypeProbs = {
+		{1.0f, 0, 0},
+		{3/4.0f, 1/4.0f, 0},
+		{2/4.0f, 2/4.0f, 0},
+		{1/4.0f, 3/4.0f, 0},
+		{2/8.0f, 5/8.0f, 1/8.0f},
+		{1/8.0f, 5/8.0f, 2/8.0f},
+		{1/8.0f, 4/8.0f, 3/8.0f},
+		{1/16.0f, 7/16.0f, 8/16.0f}
+	};
+	
+	private void spawnEnemies() {
 		for(int i = 0 ; i < 5; i++) {
-			enemies.add(new Enemy(interval * i));
+			float rand = RandomMethod.nextFloat(0, 1);
+			int enemyType;
+			
+			if (rand < enemyTypeProbs[level][Enemy.WHITE]) {
+	            enemyType = Enemy.WHITE;
+	        } else if (rand < enemyTypeProbs[level][Enemy.WHITE] + enemyTypeProbs[level][Enemy.YELLOW]) {
+	            enemyType = Enemy.YELLOW;
+	        } else {
+	            enemyType = Enemy.RED;
+	        }
+			
+			float x = -enemyOffset * 2 + interval * i;
+			enemies.add(new Enemy(x, enemyType));
 		}
 	}
 
-	public void spawnObstacle() {
+	private void spawnObstacle() {
 		obstacles.add(new Obstacle(players.get(0).getX()));
 	}
 	
-	public void speedUp() {
+	private void speedUp() {
 		Background.setStartSpeed(Background.getStartSpeed() * 1.0046f);
 		Enemy.setStartSpeed(Enemy.getStartSpeed() * 1.0046f);
 		
@@ -137,7 +176,13 @@ public class Playing extends Gamestate {
 		spawnObstacleTimer.setPeriod(spawnObstacleTimer.getPeriod() * 0.9954);
 	}
 	
-	public boolean isGameover() {
+	private void levelUp() {
+		if (level < 7) {
+			level++;
+		}
+	}
+	
+	private boolean isGameover() {
 		boolean isAllDead = true;
 		
 		for (Player p : players) {
@@ -158,6 +203,8 @@ public class Playing extends Gamestate {
 				entity.get(i).render(g);
 			}
 		}
+		
+		playerHpUi.render(g);
 	}
 	
 	public List<List<? extends Entity>> getEntities() {

@@ -19,8 +19,8 @@ public class Gameover extends Gamestate {
 	private static BufferedImage sdImg;
 	private static BufferedImage gameOverPhraseImg;
 	
-	private static String sdImgPath = "images/gameover/sd_01.png";
-	private static String gameOverPhraseImgPath = "images/gameover/gameover.png";
+	private static String sdImgPath = "images/ui/gameover/sd_01.png";
+	private static String gameOverPhraseImgPath = "images/ui/gameover/gameover.png";
 	
     static {
 		loadImg();
